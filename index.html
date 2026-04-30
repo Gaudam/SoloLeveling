@@ -94,14 +94,21 @@
 
         .mobile-tab-btn {
             flex: 1;
-            padding: 12px 5px;
-            font-size: 10px;
+            padding: 12px 2px;
+            font-size: 9px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
             color: #475569;
             transition: all 0.3s;
             border-bottom: 3px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (min-width: 400px) {
+            .mobile-tab-btn { font-size: 10px; letter-spacing: 0.1em; }
         }
         .mobile-tab-btn.active {
             color: var(--system-blue);
@@ -132,6 +139,7 @@
             <button onclick="switchMobileTab('hunter')" id="mb-tab-hunter" class="mobile-tab-btn active"><i class="fas fa-user-shield mb-1 block text-lg"></i> Hunter</button>
             <button onclick="switchMobileTab('quests')" id="mb-tab-quests" class="mobile-tab-btn"><i class="fas fa-sword mb-1 block text-lg"></i> Quests</button>
             <button onclick="switchMobileTab('metrics')" id="mb-tab-metrics" class="mobile-tab-btn"><i class="fas fa-chart-line mb-1 block text-lg"></i> Metrics</button>
+            <button onclick="switchMobileTab('terminal')" id="mb-tab-terminal" class="mobile-tab-btn"><i class="fas fa-terminal mb-1 block text-lg"></i> Terminal</button>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
@@ -184,8 +192,8 @@
                     </div>
                 </div>
 
-                <!-- Trackers Section -->
-                <div id="sec-metrics" class="space-y-6 pt-2">
+                <!-- Trackers Section (Only visible on Desktop) -->
+                <div id="sec-metrics" class="hidden lg:block space-y-6 pt-2">
                     <div class="flex items-center gap-4"><i class="fas fa-chart-line text-cyan-400 text-3xl"></i><h2 class="text-xl font-black italic uppercase tracking-tighter leading-none">Metric Trackers</h2></div>
                     <div id="trackers-container" class="space-y-4"></div>
                 </div>
@@ -193,8 +201,8 @@
 
             <!-- Main Hub: Direct Objective Stream -->
             <main id="sec-quests" class="lg:col-span-8 space-y-6">
-                <!-- Tactical Header Ribbon -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+                <!-- Tactical Header Ribbon (Only visible on Desktop) -->
+                <div class="hidden lg:grid lg:grid-cols-3 gap-4 items-stretch">
                     <!-- Path Card -->
                     <div class="bg-[#111114] border-2 border-[#1e1e24] p-4 md:p-5 rounded-3xl flex items-center justify-between gap-4 shadow-xl group">
                         <div class="flex items-center gap-4">
@@ -262,6 +270,58 @@
                     </div>
                 </div>
             </main>
+
+            <!-- Mobile Only: Terminal Tab (Path, Streak, Action Hub, Trackers) -->
+            <aside id="sec-terminal" class="hidden space-y-6 flex flex-col">
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- Path Card (Mobile version) -->
+                    <div class="bg-[#111114] border-2 border-[#1e1e24] p-5 rounded-3xl flex items-center justify-between gap-4 shadow-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-cyan-500/10 p-3 rounded-xl text-cyan-500"><i class="fas fa-calendar-day text-2xl"></i></div>
+                            <div>
+                                <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">PATH</h3>
+                                <p id="current-path-text-mobile" class="text-cyan-400 text-2xl font-black uppercase tracking-widest">WORK</p>
+                            </div>
+                        </div>
+                        <button onclick="openPathModal()" class="p-3 bg-cyan-900/30 border border-cyan-500/40 text-cyan-400 rounded-xl"><i class="fas fa-exchange-alt"></i></button>
+                    </div>
+
+                    <!-- Streak Card (Mobile version) -->
+                    <div class="bg-[#111114] border-2 border-[#1e1e24] p-5 rounded-3xl flex items-center justify-between shadow-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-orange-500/10 p-3 rounded-xl text-orange-500"><i class="fas fa-fire text-2xl"></i></div>
+                            <div>
+                                <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">STREAK</h3>
+                                <p class="text-[10px] text-slate-400 font-black uppercase leading-tight">Days Clean</p>
+                            </div>
+                        </div>
+                        <p id="streak-text-mobile" class="text-orange-500 text-6xl font-black system-font leading-none mr-3">0</p>
+                    </div>
+
+                    <!-- Action Hub (Mobile version) -->
+                    <div class="bg-[#111114] border-2 border-[#1e1e24] p-4 rounded-3xl shadow-2xl">
+                        <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 ml-2">System Functions</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="openLog()" class="action-button"><i class="fas fa-list-ul text-cyan-500"></i> Records</button>
+                            <button onclick="openAchievementGallery()" class="action-button"><i class="fas fa-trophy text-yellow-500"></i> Hall</button>
+                            <button onclick="openCalendarModal()" class="action-button"><i class="fas fa-calendar-alt text-purple-400"></i> Dates</button>
+                            <button onclick="openConfigModal()" class="action-button"><i class="fas fa-cog text-cyan-500"></i> Config</button>
+                            <button onclick="exportData()" class="action-button"><i class="fas fa-file-export text-slate-400"></i> Export</button>
+                            <button onclick="document.getElementById('importFileMobile').click()" class="action-button"><i class="fas fa-file-import text-slate-400"></i> Import</button>
+                            <input type="file" id="importFileMobile" class="hidden" onchange="importData(this)">
+                        </div>
+                    </div>
+
+                    <!-- Metrics / Trackers (Mobile version) -->
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-center gap-4 ml-2">
+                            <i class="fas fa-chart-line text-cyan-400 text-2xl"></i>
+                            <h2 class="text-xl font-black italic uppercase tracking-tighter">Metric Trackers</h2>
+                        </div>
+                        <div id="trackers-container-mobile" class="space-y-4"></div>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
@@ -419,7 +479,11 @@
             
             window.addEventListener('resize', () => {
                 if (window.innerWidth >= 1024) switchMobileTab('all');
-                else if (document.getElementById('mb-tab-hunter') && document.getElementById('mb-tab-hunter').classList.contains('active')) switchMobileTab('hunter');
+                else {
+                    // Refresh current mobile tab visibility on resize
+                    const activeBtn = document.querySelector('.mobile-tab-btn.active');
+                    if(activeBtn) switchMobileTab(activeBtn.id.replace('mb-tab-',''));
+                }
             });
 
             if (window.innerWidth < 1024) switchMobileTab('hunter');
@@ -691,17 +755,43 @@
             }
 
             const hunter = document.getElementById('sec-hunter');
-            const metrics = document.getElementById('sec-metrics');
+            const metrics = document.getElementById('sec-metrics'); // This is desktop trackers
             const quests = document.getElementById('sec-quests');
+            const terminal = document.getElementById('sec-terminal');
 
             if (window.innerWidth < 1024) {
-                if (tab === 'hunter') { if(hunter) hunter.style.display = 'flex'; if(metrics) metrics.style.display = 'none'; if(quests) quests.style.display = 'none'; }
-                if (tab === 'quests') { if(hunter) hunter.style.display = 'none'; if(metrics) metrics.style.display = 'none'; if(quests) quests.style.display = 'block'; }
-                if (tab === 'metrics') { if(hunter) hunter.style.display = 'none'; if(metrics) metrics.style.display = 'block'; if(quests) quests.style.display = 'none'; }
+                // Mobile layout logic
+                if (tab === 'hunter') { 
+                    if(hunter) hunter.style.display = 'flex'; 
+                    if(quests) quests.style.display = 'none'; 
+                    if(terminal) terminal.style.display = 'none';
+                    if(metrics) metrics.style.display = 'none';
+                }
+                else if (tab === 'quests') { 
+                    if(hunter) hunter.style.display = 'none'; 
+                    if(quests) quests.style.display = 'block'; 
+                    if(terminal) terminal.style.display = 'none';
+                    if(metrics) metrics.style.display = 'none';
+                }
+                else if (tab === 'metrics') { 
+                    // Showing desktop-style metrics section but standalone
+                    if(hunter) hunter.style.display = 'none'; 
+                    if(quests) quests.style.display = 'none'; 
+                    if(terminal) terminal.style.display = 'none';
+                    if(metrics) metrics.style.display = 'block';
+                }
+                else if (tab === 'terminal') {
+                    if(hunter) hunter.style.display = 'none'; 
+                    if(quests) quests.style.display = 'none'; 
+                    if(metrics) metrics.style.display = 'none';
+                    if(terminal) terminal.style.display = 'flex';
+                }
             } else {
+                // Desktop layout logic
                 if(hunter) hunter.style.display = 'flex'; 
                 if(metrics) metrics.style.display = 'block'; 
                 if(quests) quests.style.display = 'block';
+                if(terminal) terminal.style.display = 'none';
             }
         }
 
@@ -714,7 +804,10 @@
             STATS.forEach(s => { const el = document.getElementById(`stat-${s}`); if(el) el.innerText = state.player.stats[s]; });
             
             const streakDisp = document.getElementById('streak-text'); if(streakDisp) streakDisp.innerText = state.player.streak;
+            const streakDispMob = document.getElementById('streak-text-mobile'); if(streakDispMob) streakDispMob.innerText = state.player.streak;
+            
             const pathDisp = document.getElementById('current-path-text'); if(pathDisp) pathDisp.innerText = state.currentPath.toUpperCase();
+            const pathDispMob = document.getElementById('current-path-text-mobile'); if(pathDispMob) pathDispMob.innerText = state.currentPath.toUpperCase();
             
             const qpCur = document.getElementById('current-qp'); if(qpCur) qpCur.innerText = state.dailyPoints;
             const qpTgt = document.getElementById('target-qp'); if(qpTgt) qpTgt.innerText = state.settings.requiredPoints || 5;
@@ -762,15 +855,22 @@
         }
 
         function renderTrackers() {
-            const container = document.getElementById('trackers-container'); if(!container) return;
-            container.innerHTML = '';
-            state.trackers.forEach(t => {
-                const last = t.data.length ? t.data[t.data.length-1].value : '--';
-                const div = document.createElement('div');
-                div.className = "bg-[#111114] border-2 border-[#1e1e24] p-5 md:p-6 rounded-3xl flex justify-between items-center cursor-pointer hover:border-cyan-500 transition-colors shadow-xl";
-                div.onclick = (e) => { e.stopPropagation(); openTracker(t.id); };
-                div.innerHTML = `<div><h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">${t.name}</h4><p class="text-2xl md:text-3xl font-black system-font text-white">${last} <span class="text-[9px] text-slate-600 font-normal uppercase tracking-widest">${t.unit}</span></p></div><i class="fas fa-plus text-sm text-slate-600"></i>`;
-                container.appendChild(div);
+            const containers = [
+                document.getElementById('trackers-container'),
+                document.getElementById('trackers-container-mobile')
+            ];
+            
+            containers.forEach(container => {
+                if(!container) return;
+                container.innerHTML = '';
+                state.trackers.forEach(t => {
+                    const last = t.data.length ? t.data[t.data.length-1].value : '--';
+                    const div = document.createElement('div');
+                    div.className = "bg-[#111114] border-2 border-[#1e1e24] p-5 md:p-6 rounded-3xl flex justify-between items-center cursor-pointer hover:border-cyan-500 transition-colors shadow-xl";
+                    div.onclick = (e) => { e.stopPropagation(); openTracker(t.id); };
+                    div.innerHTML = `<div><h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">${t.name}</h4><p class="text-2xl md:text-3xl font-black system-font text-white">${last} <span class="text-[9px] text-slate-600 font-normal uppercase tracking-widest">${t.unit}</span></p></div><i class="fas fa-plus text-sm text-slate-600"></i>`;
+                    container.appendChild(div);
+                });
             });
         }
 
