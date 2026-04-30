@@ -192,10 +192,15 @@
                     </div>
                 </div>
 
-                <!-- Trackers Section (Only visible on Desktop) -->
+                <!-- Trackers Section -->
                 <div id="sec-metrics" class="hidden lg:block space-y-6 pt-2">
                     <div class="flex items-center gap-4"><i class="fas fa-chart-line text-cyan-400 text-3xl"></i><h2 class="text-xl font-black italic uppercase tracking-tighter leading-none">Metric Trackers</h2></div>
-                    <div id="trackers-container" class="space-y-4"></div>
+                    
+                    <!-- Desktop container -->
+                    <div id="trackers-container" class="hidden lg:block space-y-4"></div>
+                    
+                    <!-- Mobile container (shows when Metrics tab is active) -->
+                    <div id="trackers-container-mobile" class="lg:hidden space-y-4"></div>
                 </div>
             </aside>
 
@@ -271,7 +276,7 @@
                 </div>
             </main>
 
-            <!-- Mobile Only: Terminal Tab (Path, Streak, Action Hub, Trackers) -->
+            <!-- Mobile Only: Terminal Tab (Path, Streak, Action Hub) -->
             <aside id="sec-terminal" class="hidden space-y-6 flex flex-col">
                 <div class="grid grid-cols-1 gap-4">
                     <!-- Path Card (Mobile version) -->
@@ -310,15 +315,6 @@
                             <button onclick="document.getElementById('importFileMobile').click()" class="action-button"><i class="fas fa-file-import text-slate-400"></i> Import</button>
                             <input type="file" id="importFileMobile" class="hidden" onchange="importData(this)">
                         </div>
-                    </div>
-
-                    <!-- Metrics / Trackers (Mobile version) -->
-                    <div class="space-y-4 pt-2">
-                        <div class="flex items-center gap-4 ml-2">
-                            <i class="fas fa-chart-line text-cyan-400 text-2xl"></i>
-                            <h2 class="text-xl font-black italic uppercase tracking-tighter">Metric Trackers</h2>
-                        </div>
-                        <div id="trackers-container-mobile" class="space-y-4"></div>
                     </div>
                 </div>
             </aside>
@@ -755,7 +751,7 @@
             }
 
             const hunter = document.getElementById('sec-hunter');
-            const metrics = document.getElementById('sec-metrics'); // This is desktop trackers
+            const metrics = document.getElementById('sec-metrics'); 
             const quests = document.getElementById('sec-quests');
             const terminal = document.getElementById('sec-terminal');
 
@@ -774,7 +770,6 @@
                     if(metrics) metrics.style.display = 'none';
                 }
                 else if (tab === 'metrics') { 
-                    // Showing desktop-style metrics section but standalone
                     if(hunter) hunter.style.display = 'none'; 
                     if(quests) quests.style.display = 'none'; 
                     if(terminal) terminal.style.display = 'none';
