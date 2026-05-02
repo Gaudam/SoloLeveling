@@ -826,6 +826,7 @@
                 path: q.path || 'all'
             });
             revalidateAchievements();
+            checkAchievements();
             notify("Objective Completed", true);
             renderUI(); saveSystemData();
         }
