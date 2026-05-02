@@ -234,12 +234,12 @@
                     </div>
 
                     <!-- Streak Card -->
-                    <div class="bg-[#111114] border-2 border-[#1e1e24] p-4 md:p-5 rounded-3xl flex items-center justify-between shadow-xl group">
+                    <div id="streak-card" class="bg-[#111114] border-2 border-[#1e1e24] p-4 md:p-5 rounded-3xl flex items-center justify-between shadow-xl group">
                         <div class="flex items-center gap-4">
-                            <div class="bg-orange-500/10 p-3 rounded-xl text-orange-500"><i class="fas fa-fire text-2xl"></i></div>
+                            <div id="streak-icon" class="bg-orange-500/10 p-3 rounded-xl text-orange-500"><i class="fas fa-fire text-2xl"></i></div>
                             <div>
                                 <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">STREAK</h3>
-                                <p class="text-[10px] text-slate-400 font-black uppercase leading-tight whitespace-nowrap">Days Clean</p>
+                                <p id="streak-subtext" class="text-[10px] text-slate-400 font-black uppercase leading-tight whitespace-nowrap">Days Clean</p>
                             </div>
                         </div>
                         <p id="streak-text" class="text-orange-500 text-5xl md:text-6xl font-black system-font leading-none mr-3">0</p>
@@ -306,12 +306,12 @@
                     </div>
 
                     <!-- Streak Card (Mobile version) -->
-                    <div class="bg-[#111114] border-2 border-[#1e1e24] p-5 rounded-3xl flex items-center justify-between shadow-xl">
+                    <div id="streak-card-mobile" class="bg-[#111114] border-2 border-[#1e1e24] p-5 rounded-3xl flex items-center justify-between shadow-xl">
                         <div class="flex items-center gap-4">
-                            <div class="bg-orange-500/10 p-3 rounded-xl text-orange-500"><i class="fas fa-fire text-2xl"></i></div>
+                            <div id="streak-icon-mobile" class="bg-orange-500/10 p-3 rounded-xl text-orange-500"><i class="fas fa-fire text-2xl"></i></div>
                             <div>
                                 <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">STREAK</h3>
-                                <p class="text-[10px] text-slate-400 font-black uppercase leading-tight">Days Clean</p>
+                                <p id="streak-subtext-mobile" class="text-[10px] text-slate-400 font-black uppercase leading-tight">Days Clean</p>
                             </div>
                         </div>
                         <p id="streak-text-mobile" class="text-orange-500 text-6xl font-black system-font leading-none mr-3">0</p>
@@ -452,12 +452,12 @@
             for(let l=2; l<=100; l+=1) list.push({ id: `ach_lv_${l}`, title: `Level ${l} Hunter`, desc: `Reach Level ${l}.`, type: 'level', operator: '>=', value: l, rewards: { ap: 2 } });
             STATS.forEach(s => {
                 const label = s === 'intelligence' ? 'INTELLIGENCE' : s.toUpperCase();
-                for(let v=20; v<=250; v+=10) list.push({ id: `ach_${s}_${v}`, title: `${label} ${v}`, desc: `Increase ${s} to ${v}.`, type: s, operator: '>=', value: v, rewards: { ap: 1 } });
+                for(let v=25; v<=1000; v+=25) list.push({ id: `ach_${s}_${v}`, title: `${label} ${v}`, desc: `Increase ${s} to ${v}.`, type: s, operator: '>=', value: v, rewards: { ap: 1 } });
             });
             ['daily', 'weekly', 'monthly', 'dated', 'one_time'].forEach(cat => {
-                [1, 5, 10, 25, 50, 100, 200, 300, 500, 1000].forEach(v => list.push({ id: `ach_q_${cat}_${v}`, title: `${v} ${cat.toUpperCase()} CLEARS`, desc: `Finish ${v} ${cat} objectives.`, type: `cat_${cat}`, operator: '>=', value: v, rewards: { ap: Math.ceil(v/10) } }));
+                [1, 5, 10, 25, 50, 100, 200, 300, 500, 1000, 10000, 100000, 1000000].forEach(v => list.push({ id: `ach_q_${cat}_${v}`, title: `${v} ${cat.toUpperCase()} CLEARS`, desc: `Finish ${v} ${cat} objectives.`, type: `cat_${cat}`, operator: '>=', value: v, rewards: { ap: Math.ceil(v/10) } }));
             });
-            [3, 7, 14, 30, 60, 90, 100, 180, 365].forEach(v => list.push({ id: `ach_str_${v}`, title: `${v} DAY STREAK`, desc: `Persistence for ${v} days.`, type: 'streak', operator: '>=', value: v, rewards: { ap: 5 } }));
+            [3, 7, 14, 30, 60, 90, 100, 120, 150, 180, 210, 240, 270, 300, 330, 365].forEach(v => list.push({ id: `ach_str_${v}`, title: `${v} DAY STREAK`, desc: `Persistence for ${v} days.`, type: 'streak', operator: '>=', value: v, rewards: { ap: 5 } }));
             return list;
         };
 
@@ -472,8 +472,8 @@
             { id: 'q8', text: "Laundry Towels", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
             { id: 'q9', text: "Laundry Underwear/Socks", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
             { id: 'q10', text: "Emptying trash cans", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q11', text: "Walk for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1, agility: 1, willpower: 1 }, deadline: '', points: 1 },
-            { id: 'q12', text: "Exercise for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1, strength: 1, willpower: 1 }, deadline: '', points: 1 },
+            { id: 'q11', text: "Walk for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1, agility: 1, willpower: 1 }, deadline: '', points: 2 },
+            { id: 'q12', text: "Exercise for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1, strength: 1, willpower: 1 }, deadline: '', points: 3 },
             { id: 'q13', text: "Cleaning living room", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
             { id: 'q14', text: "Cleaning bedroom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
             { id: 'q15', text: "Cleaning bathroom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
@@ -481,23 +481,23 @@
             { id: 'q17', text: "Cleaning kitchen", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
             { id: 'q18', text: "Visiting mom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1, willpower: 1 }, deadline: '', points: 0 },
             { id: 'q19', text: "Win a ranked game", xp: 5, xpPercent: 0, category: 'daily', path: 'all', isOneTime: false, rewards: { instinct: 1, focus: 1 }, deadline: '', points: 1 },
-            { id: 'q20', text: "Read 10 pages of a non-fiction book", xp: 60, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { intelligence: 2, focus: 1 }, deadline: '', points: 1 },
-            { id: 'q21', text: "Write 1 page", xp: 40, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { intelligence: 1, focus: 1, ap: 1 }, deadline: '', points: 1 },
+            { id: 'q20', text: "Read 10 pages of a non-fiction book", xp: 60, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { intelligence: 2, focus: 1 }, deadline: '', points: 3 },
+            { id: 'q21', text: "Write 1 page", xp: 40, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { intelligence: 1, focus: 1, ap: 1 }, deadline: '', points: 2 },
             { id: 'q22', text: "Grocery shopping", xp: 20, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
             { id: 'q23', text: "Financial planning", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { intelligence: 1, sense: 1 }, deadline: '', points: 0 },
             { id: 'q24', text: "Keep a journal", xp: 30, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { intelligence: 1, sense: 1 }, deadline: '', points: 0 },
-            { id: 'q25', text: "No Sugar", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 1 },
+            { id: 'q25', text: "No Sugar", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 3 },
             { id: 'q26', text: "Lose 1 kg", xp: 100, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 0 },
-            { id: 'q27', text: "Water only", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 1 },
+            { id: 'q27', text: "Water only", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 2 },
             { id: 'q28', text: "Organize workspace", xp: 30, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
             { id: 'q29', text: "Call mom", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
-            { id: 'q30', text: "Study 20 minutes", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
+            { id: 'q30', text: "Study 20 minutes", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 2 },
             { id: 'q31', text: "Save 500 euro", xp: 100, xpPercent: 5, category: 'monthly', path: 'all', isOneTime: false, rewards: { sense: 5, willpower: 5, intelligence: 5, ap: 5 }, deadline: '', points: 0 }
         ];
 
         let state = {
             player: { 
-                name: "Player", level: 1, rank: "F", xp: 0, requiredXp: 100, streak: 0, ap: 0, 
+                name: "Player", level: 1, rank: "F", xp: 0, requiredXp: 100, streak: 0, nonCompletionStreak: 0, ap: 0, 
                 stats: { strength: 10, intelligence: 10, agility: 10, vitality: 10, sense: 10, willpower: 10, focus: 10, instinct: 10 } 
             },
             quests: [...DEFAULT_QUESTS],
@@ -553,8 +553,19 @@
             if (now.getDay() === 0 && state.lastWeeklyReset !== todayStr) { state.weeklyCompletedIds = []; state.lastWeeklyReset = todayStr; }
             if (state.lastDailyReset !== todayStr) { 
                 if (state.lastDailyReset !== null) {
-                    const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
-                    if (state.lastStreakDate !== state.lastDailyReset) state.player.streak = 0;
+                    if ((state.thresholdsClearedToday || 0) < 1) {
+                        state.player.nonCompletionStreak = (state.player.nonCompletionStreak || 0) + 1;
+                        state.player.streak = 0;
+                        state.lastStreakDate = null;
+                        for (let i = 0; i < state.player.nonCompletionStreak; i++) {
+                            const stat = STATS[Math.floor(Math.random() * STATS.length)];
+                            state.player.stats[stat] = (state.player.stats[stat] || 0) - 1;
+                        }
+                        state.player.ap = (state.player.ap || 0) - 1;
+                        notify(`DAILY GOAL MISSED: non-completion streak ${state.player.nonCompletionStreak}. -1 AP, -${state.player.nonCompletionStreak} random stats.`);
+                    } else {
+                        if (state.player.nonCompletionStreak > 0) state.player.nonCompletionStreak = 0;
+                    }
                 }
                 state.completedIds = []; state.lastDailyReset = todayStr; state.dailyPoints = 0; state.thresholdsClearedToday = 0; 
                 setTimeout(() => openPathModal(), 1000); 
@@ -796,6 +807,7 @@
                     if (state.thresholdsClearedToday === 1) {
                         const today = new Date().toDateString();
                         if (state.lastStreakDate !== today) {
+                            state.player.nonCompletionStreak = 0;
                             state.player.streak++;
                             state.lastStreakDate = today;
                             notify("DAILY GOAL REACHED! STREAK UPDATED.", true);
@@ -864,8 +876,40 @@
             
             STATS.forEach(s => { const el = document.getElementById(`stat-${s}`); if(el) el.innerText = (state.player.stats[s] || 0); });
             
-            const streakDisp = document.getElementById('streak-text'); if(streakDisp) streakDisp.innerText = state.player.streak;
-            const streakDispMob = document.getElementById('streak-text-mobile'); if(streakDispMob) streakDispMob.innerText = state.player.streak;
+            const nonCompletion = state.player.nonCompletionStreak || 0;
+            const failureMode = nonCompletion > 0;
+            const streakCount = failureMode ? nonCompletion : state.player.streak;
+            const streakLabelText = failureMode ? 'Streak of Non-Completion' : 'Days Clean';
+            const streakTextColor = failureMode ? 'text-red-500' : 'text-orange-500';
+            const streakIcon = failureMode ? 'fa-exclamation-triangle' : 'fa-fire';
+            const streakIconBg = failureMode ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500';
+            const streakSubText = document.getElementById('streak-subtext');
+            const streakSubTextMob = document.getElementById('streak-subtext-mobile');
+            const streakIconEl = document.getElementById('streak-icon');
+            const streakIconMobEl = document.getElementById('streak-icon-mobile');
+            const streakDisp = document.getElementById('streak-text');
+            const streakDispMob = document.getElementById('streak-text-mobile');
+
+            if (streakDisp) {
+                streakDisp.innerText = streakCount;
+                streakDisp.classList.toggle('text-orange-500', !failureMode);
+                streakDisp.classList.toggle('text-red-500', failureMode);
+            }
+            if (streakDispMob) {
+                streakDispMob.innerText = streakCount;
+                streakDispMob.classList.toggle('text-orange-500', !failureMode);
+                streakDispMob.classList.toggle('text-red-500', failureMode);
+            }
+            if (streakSubText) streakSubText.innerText = streakLabelText;
+            if (streakSubTextMob) streakSubTextMob.innerText = streakLabelText;
+            if (streakIconEl) {
+                streakIconEl.className = `${streakIconBg} p-3 rounded-xl ${streakIcon === 'fa-fire' ? 'text-orange-500' : 'text-red-500'}`;
+                streakIconEl.innerHTML = `<i class="fas ${streakIcon} text-2xl"></i>`;
+            }
+            if (streakIconMobEl) {
+                streakIconMobEl.className = `${streakIconBg} p-3 rounded-xl ${streakIcon === 'fa-fire' ? 'text-orange-500' : 'text-red-500'}`;
+                streakIconMobEl.innerHTML = `<i class="fas ${streakIcon} text-2xl"></i>`;
+            }
             
             const pathDisp = document.getElementById('current-path-text'); if(pathDisp) pathDisp.innerText = state.currentPath.toUpperCase();
             const pathDispMob = document.getElementById('current-path-text-mobile'); if(pathDispMob) pathDispMob.innerText = state.currentPath.toUpperCase();
@@ -1284,6 +1328,7 @@
                     if(!state.settings) state.settings = { requiredPoints: 5, streakBonusXp: 50 };
                     if(state.dailyPoints === undefined) state.dailyPoints = 0;
                     if(state.thresholdsClearedToday === undefined) state.thresholdsClearedToday = 0;
+                    if(state.player.nonCompletionStreak === undefined) state.player.nonCompletionStreak = 0;
                     if(!state.completionTimestamps) state.completionTimestamps = {};
                     state.player.requiredXp = getRequiredXp(state.player.level);
                     if(state.player.xp >= state.player.requiredXp) checkLevelUp();
