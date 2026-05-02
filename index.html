@@ -372,9 +372,12 @@
         <div class="bg-[#0f0f12] border-2 border-[#1e1e24] w-full max-w-6xl rounded-3xl md:rounded-[40px] p-4 md:p-10 max-h-[95vh] flex flex-col shadow-2xl">
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 border-b-2 border-white/5 gap-4">
                 <h2 class="text-3xl font-black italic text-yellow-500 uppercase tracking-tighter font-black">Hall of Fame</h2>
-                <div class="flex gap-4 w-full md:w-auto">
-                    <select id="gallery-filter" onchange="renderAchievementGallery()" class="flex-1 md:flex-none bg-black border-2 border-slate-800 text-sm p-3 rounded-xl text-slate-400 focus:border-cyan-500 outline-none uppercase font-black"><option value="all">ALL</option><option value="unlocked">UNLOCKED</option><option value="locked">LOCKED</option><option value="level">LEVEL</option><option value="stats">STATS</option><option value="streak">STREAK</option><option value="cat_daily">DAILY CLEARS</option><option value="cat_weekly">WEEKLY CLEARS</option><option value="cat_monthly">MONTHLY CLEARS</option></select>
-                    <button onclick="closeModals()" class="px-10 py-4 bg-slate-800 hover:bg-slate-700 rounded-2xl font-black text-sm uppercase transition-colors">Close</button>
+                <div class="flex flex-col md:flex-row md:items-center gap-3 w-full md:w-auto">
+                    <input id="gallery-search" type="text" value="" oninput="updateGallerySearch(this)" placeholder="Search Hall of Fame..." class="flex-1 bg-black border-2 border-slate-800 text-sm p-3 rounded-xl text-slate-400 focus:border-cyan-500 outline-none uppercase font-black">
+                    <div class="flex gap-4 w-full md:w-auto">
+                        <select id="gallery-filter" onchange="renderAchievementGallery()" class="flex-1 md:flex-none bg-black border-2 border-slate-800 text-sm p-3 rounded-xl text-slate-400 focus:border-cyan-500 outline-none uppercase font-black"><option value="all">ALL</option><option value="unlocked">UNLOCKED</option><option value="locked">LOCKED</option><option value="level">LEVEL</option><option value="stats">STATS</option><option value="streak">STREAK</option><option value="cat_daily">DAILY CLEARS</option><option value="cat_weekly">WEEKLY CLEARS</option><option value="cat_monthly">MONTHLY CLEARS</option><option value="cat_path_all">PATH ALL</option><option value="cat_path_work">PATH WORK</option><option value="cat_path_free">PATH FREE</option><option value="cat_path_event">PATH EVENT</option></select>
+                        <button onclick="closeModals()" class="px-10 py-4 bg-slate-800 hover:bg-slate-700 rounded-2xl font-black text-sm uppercase transition-colors">Close</button>
+                    </div>
                 </div>
             </div>
             <div id="gallery-container" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pr-4"></div>
@@ -470,42 +473,46 @@
             ['daily', 'weekly', 'monthly', 'dated', 'one_time'].forEach(cat => {
                 [1, 5, 10, 25, 50, 100, 200, 300, 500, 1000, 10000, 100000, 1000000].forEach(v => list.push({ id: `ach_q_${cat}_${v}`, title: `${v} ${cat.toUpperCase()} CLEARS`, desc: `Finish ${v} ${cat} objectives.`, type: `cat_${cat}`, operator: '>=', value: v, rewards: { ap: Math.ceil(v/10) } }));
             });
+            ['all', 'work', 'free', 'event'].forEach(path => {
+                [1, 5, 10, 25, 50, 100, 200, 300, 500].forEach(v => list.push({ id: `ach_q_path_${path}_${v}`, title: `${v} ${path.toUpperCase()} PATH GOALS`, desc: `Complete the daily quest goal ${v} times on ${path} path.`, type: `cat_path_${path}`, operator: '>=', value: v, rewards: { ap: Math.ceil(v/10) } }));
+            });
+            [1, 5, 10, 25, 50, 100, 200, 500].forEach(v => list.push({ id: `ach_q_repeatable_${v}`, title: `${v} REPEATABLE CLEARS`, desc: `Complete ${v} repeatable quest objectives.`, type: 'cat_repeatable', operator: '>=', value: v, rewards: { ap: Math.ceil(v/10) } }));
             [3, 7, 14, 30, 60, 90, 100, 120, 150, 180, 210, 240, 270, 300, 330, 365].forEach(v => list.push({ id: `ach_str_${v}`, title: `${v} DAY STREAK`, desc: `Persistence for ${v} days.`, type: 'streak', operator: '>=', value: v, rewards: { ap: 5 } }));
             return list;
         };
 
         const DEFAULT_QUESTS = [
-            { id: 'q1', text: "Wake up before 7:00 AM", xp: 15, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { willpower: 1 }, deadline: '', points: 1 },
-            { id: 'q2', text: "8 Hours Productive Work", xp: 80, xpPercent: 3, category: 'daily', path: 'work', isOneTime: false, rewards: { willpower: 1, sense: 1 }, deadline: '', points: 3 },
-            { id: 'q3', text: "Healthy Breakfast", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
-            { id: 'q4', text: "Healthy Lunch", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
-            { id: 'q5', text: "Healthy Dinner", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
-            { id: 'q6', text: "7/8 Hours Sleep", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
-            { id: 'q7', text: "Laundry Clothes", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q8', text: "Laundry Towels", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q9', text: "Laundry Underwear/Socks", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q10', text: "Emptying trash cans", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q11', text: "Walk for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1, agility: 1, willpower: 1 }, deadline: '', points: 2 },
-            { id: 'q12', text: "Exercise for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 1, strength: 1, willpower: 1 }, deadline: '', points: 3 },
-            { id: 'q13', text: "Cleaning living room", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q14', text: "Cleaning bedroom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q15', text: "Cleaning bathroom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q16', text: "Cleaning balcony", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q17', text: "Cleaning kitchen", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 0 },
-            { id: 'q18', text: "Visiting mom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { sense: 1, willpower: 1 }, deadline: '', points: 0 },
-            { id: 'q19', text: "Win a ranked game", xp: 5, xpPercent: 0, category: 'daily', path: 'all', isOneTime: false, rewards: { instinct: 1, focus: 1 }, deadline: '', points: 1 },
-            { id: 'q20', text: "Read 10 pages of a non-fiction book", xp: 60, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { intelligence: 2, focus: 1 }, deadline: '', points: 3 },
-            { id: 'q21', text: "Write 1 page", xp: 40, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { intelligence: 1, focus: 1, ap: 1 }, deadline: '', points: 2 },
-            { id: 'q22', text: "Grocery shopping", xp: 20, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
-            { id: 'q23', text: "Financial planning", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { intelligence: 1, sense: 1 }, deadline: '', points: 0 },
-            { id: 'q24', text: "Keep a journal", xp: 30, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { intelligence: 1, sense: 1 }, deadline: '', points: 0 },
-            { id: 'q25', text: "No Sugar", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 3 },
-            { id: 'q26', text: "Lose 1 kg", xp: 100, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 0 },
-            { id: 'q27', text: "Water only", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 2 },
-            { id: 'q28', text: "Organize workspace", xp: 30, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
-            { id: 'q29', text: "Call mom", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 1 },
-            { id: 'q30', text: "Study 20 minutes", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, rewards: { sense: 1 }, deadline: '', points: 2 },
-            { id: 'q31', text: "Save 500 euro", xp: 100, xpPercent: 5, category: 'monthly', path: 'all', isOneTime: false, rewards: { sense: 5, willpower: 5, intelligence: 5, ap: 5 }, deadline: '', points: 0 }
+            { id: 'q1', text: "Wake up before 7:00 AM", xp: 15, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { willpower: 1 }, deadline: '', points: 1 },
+            { id: 'q2', text: "8 Hours Productive Work", xp: 80, xpPercent: 3, category: 'daily', path: 'work', isOneTime: false, repeatable: false, rewards: { willpower: 1, sense: 1 }, deadline: '', points: 3 },
+            { id: 'q3', text: "Healthy Breakfast", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
+            { id: 'q4', text: "Healthy Lunch", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
+            { id: 'q5', text: "Healthy Dinner", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
+            { id: 'q6', text: "7/8 Hours Sleep", xp: 20, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 1 }, deadline: '', points: 1 },
+            { id: 'q7', text: "Laundry Clothes", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q8', text: "Laundry Towels", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q9', text: "Laundry Underwear/Socks", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q10', text: "Emptying trash cans", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q11', text: "Walk for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 1, agility: 1, willpower: 1 }, deadline: '', points: 2 },
+            { id: 'q12', text: "Exercise for 30 minutes", xp: 40, xpPercent: 5, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 1, strength: 1, willpower: 1 }, deadline: '', points: 3 },
+            { id: 'q13', text: "Cleaning living room", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q14', text: "Cleaning bedroom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q15', text: "Cleaning bathroom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q16', text: "Cleaning balcony", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q17', text: "Cleaning kitchen", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 0 },
+            { id: 'q18', text: "Visiting mom", xp: 50, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1, willpower: 1 }, deadline: '', points: 0 },
+            { id: 'q19', text: "Win a ranked game", xp: 5, xpPercent: 0, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { instinct: 1, focus: 1 }, deadline: '', points: 1 },
+            { id: 'q20', text: "Read 10 pages of a non-fiction book", xp: 60, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { intelligence: 2, focus: 1 }, deadline: '', points: 3 },
+            { id: 'q21', text: "Write 1 page", xp: 40, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { intelligence: 1, focus: 1, ap: 1 }, deadline: '', points: 2 },
+            { id: 'q22', text: "Grocery shopping", xp: 20, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 1 },
+            { id: 'q23', text: "Financial planning", xp: 20, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { intelligence: 1, sense: 1 }, deadline: '', points: 0 },
+            { id: 'q24', text: "Keep a journal", xp: 30, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { intelligence: 1, sense: 1 }, deadline: '', points: 0 },
+            { id: 'q25', text: "No Sugar", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 3 },
+            { id: 'q26', text: "Lose 1 kg", xp: 100, xpPercent: 1, category: 'weekly', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 0 },
+            { id: 'q27', text: "Water only", xp: 30, xpPercent: 2, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { vitality: 2, willpower: 1, sense: 1 }, deadline: '', points: 2 },
+            { id: 'q28', text: "Organize workspace", xp: 30, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 1 },
+            { id: 'q29', text: "Call mom", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 1 },
+            { id: 'q30', text: "Study 20 minutes", xp: 10, xpPercent: 1, category: 'daily', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 1 }, deadline: '', points: 2 },
+            { id: 'q31', text: "Save 500 euro", xp: 100, xpPercent: 5, category: 'monthly', path: 'all', isOneTime: false, repeatable: false, rewards: { sense: 5, willpower: 5, intelligence: 5, ap: 5 }, deadline: '', points: 0 }
         ];
 
         let state = {
@@ -530,6 +537,8 @@
         let achievementConfigMode = 'list';
         let questConfigCategory = 'daily';
         let questConfigSearchText = '';
+        let achievementConfigSearchText = '';
+        let achievementGallerySearchText = '';
         let questViewCategory = 'daily';
         let expandedQuestIds = new Set();
         let expandedAchievementIds = new Set();
@@ -595,6 +604,11 @@
                 if (ach.type === 'level') val = state.player.level;
                 else if (ach.type === 'streak') val = state.player.streak;
                 else if (ach.type === 'total_quests') val = state.logs.length;
+                else if (ach.type === 'cat_repeatable') val = state.logs.filter(l => l.repeatable).length;
+                else if (ach.type.startsWith('cat_path_')) {
+                    const pathType = ach.type.replace('cat_path_','');
+                    val = state.logs.filter(l => l.category === 'path_goal' && l.path === pathType).length;
+                }
                 else if (ach.type.startsWith('cat_')) val = state.logs.filter(l => l.category === ach.type.replace('cat_','')).length;
                 else if (state.player.stats[ach.type] !== undefined) val = state.player.stats[ach.type];
                 else if (ach.type.startsWith('tracker_')) {
@@ -625,6 +639,11 @@
                 if (ach.type === 'level') val = state.player.level;
                 else if (ach.type === 'streak') val = state.player.streak;
                 else if (ach.type === 'total_quests') val = state.logs.length;
+                else if (ach.type === 'cat_repeatable') val = state.logs.filter(l => l.repeatable).length;
+                else if (ach.type.startsWith('cat_path_')) {
+                    const pathType = ach.type.replace('cat_path_','');
+                    val = state.logs.filter(l => l.category === 'path_goal' && l.path === pathType).length;
+                }
                 else if (ach.type.startsWith('cat_')) val = state.logs.filter(l => l.category === ach.type.replace('cat_','')).length;
                 else if (state.player.stats[ach.type] !== undefined) val = state.player.stats[ach.type];
                 else if (ach.type.startsWith('tracker_')) {
@@ -706,6 +725,8 @@
                                 state.player.streak--;
                                 if(state.player.streak < 0) state.player.streak = 0;
                                 state.lastStreakDate = null;
+                                const todayStr = new Date().toLocaleDateString();
+                                state.logs = state.logs.filter(l => !(l.category === 'path_goal' && l.date === todayStr));
                                 notify("DAILY GOAL UNMET: Streak & rewards retracted.");
                             } else {
                                 notify("THRESHOLD REVERTED: Extra rewards removed.");
@@ -800,13 +821,13 @@
                 category: q.category, 
                 xp: totalXp, 
                 rewards: {...q.rewards},
-                points: pointsGained
+                points: pointsGained,
+                repeatable: !!q.repeatable,
+                path: q.path || 'all'
             });
-            
-            checkLevelUp(); checkAchievements(); notify(`CLEARED: +${totalXp} XP`); 
-            if (q.rewards?.ap > 0) openRewardModal();
-            else renderUI();
-            saveSystemData();
+            revalidateAchievements();
+            notify("Objective Completed", true);
+            renderUI(); saveSystemData();
         }
 
         function checkThresholdRewards() {
@@ -823,6 +844,18 @@
                             state.player.nonCompletionStreak = 0;
                             state.player.streak++;
                             state.lastStreakDate = today;
+                            state.logs.unshift({
+                                questId: `path_goal_${state.currentPath || 'all'}_${today}`,
+                                date: today,
+                                time: new Date().toLocaleTimeString(),
+                                text: `Daily goal reached on ${state.currentPath.toUpperCase()} path`,
+                                category: 'path_goal',
+                                path: state.currentPath || 'all',
+                                xp: 0,
+                                rewards: {},
+                                points: 0,
+                                repeatable: false
+                            });
                             notify("DAILY GOAL REACHED! STREAK UPDATED.", true);
                         }
                     } else {
@@ -1036,7 +1069,7 @@
                 searchRow.innerHTML = `
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                         <div class="flex-1 min-w-0">
-                            <input id="quest-search-input" type="text" value="${questConfigSearchText}" oninput="updateQuestSearch(this.value)" placeholder="Search quests, category, path..." class="w-full bg-slate-900 border border-slate-800 p-2 rounded-2xl text-xs md:text-sm text-white outline-none focus:border-cyan-500 font-black">
+                            <input id="quest-search-input" type="text" value="${questConfigSearchText}" oninput="updateQuestSearch(this)" placeholder="Search quests, category, path..." class="w-full bg-slate-900 border border-slate-800 p-2 rounded-2xl text-xs md:text-sm text-white outline-none focus:border-cyan-500 font-black">
                         </div>
                         <div class="flex gap-2">
                             <button onclick="setQuestConfigMode('list')" class="px-3 py-2 rounded-2xl font-black uppercase tracking-widest text-[10px] ${questConfigMode==='list' ? 'bg-cyan-500 text-black' : 'bg-slate-900 text-slate-200 border border-slate-800 hover:border-cyan-500'}">LIST</button>
@@ -1137,12 +1170,12 @@
                 });
                 actions.innerHTML = `<button onclick="addNew('quests')" class="w-full md:w-auto px-10 py-3 md:py-4 bg-cyan-900/20 border-2 border-cyan-500 text-cyan-500 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-cyan-500 hover:text-black transition-all">Add Objective</button>`;
             } else if (currentConfigTab === 'achievements') {
-                const headerRow = document.createElement('div');
-                headerRow.className = 'space-y-3 mb-4';
-                headerRow.innerHTML = `
+                const searchRow = document.createElement('div');
+                searchRow.className = 'space-y-3 mb-4';
+                searchRow.innerHTML = `
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                         <div class="flex-1 min-w-0">
-                            <h3 class="text-sm md:text-base font-black text-white uppercase tracking-[0.2em]">Milestones</h3>
+                            <input id="achievement-search-input" type="text" value="${achievementConfigSearchText}" oninput="updateAchievementSearch(this)" placeholder="Search milestones, type, value..." class="w-full bg-slate-900 border border-slate-800 p-2 rounded-2xl text-xs md:text-sm text-white outline-none focus:border-cyan-500 font-black">
                         </div>
                         <div class="flex gap-2">
                             <button onclick="achievementConfigMode='list'; renderConfigContent();" class="px-3 py-2 rounded-2xl font-black uppercase tracking-widest text-[10px] ${achievementConfigMode==='list' ? 'bg-cyan-500 text-black' : 'bg-slate-900 text-slate-200 border border-slate-800 hover:border-cyan-500'}">LIST</button>
@@ -1150,10 +1183,34 @@
                         </div>
                     </div>
                 `;
+                container.appendChild(searchRow);
+
+                const headerRow = document.createElement('div');
+                headerRow.className = 'space-y-3 mb-4';
+                headerRow.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm md:text-base font-black text-white uppercase tracking-[0.2em]">Milestones</h3>
+                        </div>
+                    </div>
+                `;
                 container.appendChild(headerRow);
 
+                const filteredAchievements = state.achievements.filter(ach => {
+                    const needle = achievementConfigSearchText.trim().toLowerCase();
+                    if (!needle) return true;
+                    const haystack = `${ach.title} ${ach.type} ${ach.operator} ${ach.value}`.toLowerCase();
+                    return haystack.includes(needle);
+                });
+                if (!filteredAchievements.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'text-slate-400 italic py-10 text-center';
+                    empty.innerText = 'No milestones match your search.';
+                    container.appendChild(empty);
+                }
+
                 const grid = document.createElement('div'); grid.className = 'grid grid-cols-1 gap-3';
-                state.achievements.forEach(ach => {
+                filteredAchievements.forEach(ach => {
                     const isExpanded = expandedAchievementIds.has(ach.id);
                     const listView = achievementConfigMode === 'list';
                     const div = document.createElement('div'); div.className = "bg-slate-950/80 border border-white/10 p-3 rounded-3xl shadow-[0_0_18px_rgba(0,0,0,0.12)]";
@@ -1179,6 +1236,11 @@
                                     <option value="cat_monthly" ${ach.type==='cat_monthly'?'selected':''}>MONTHLY</option>
                                     <option value="cat_dated" ${ach.type==='cat_dated'?'selected':''}>DATED</option>
                                     <option value="cat_one_time" ${ach.type==='cat_one_time'?'selected':''}>ONE-TIME</option>
+                                    <option value="cat_repeatable" ${ach.type==='cat_repeatable'?'selected':''}>REPEATABLE</option>
+                                    <option value="cat_path_all" ${ach.type==='cat_path_all'?'selected':''}>PATH: ALL</option>
+                                    <option value="cat_path_work" ${ach.type==='cat_path_work'?'selected':''}>PATH: WORK</option>
+                                    <option value="cat_path_free" ${ach.type==='cat_path_free'?'selected':''}>PATH: FREE</option>
+                                    <option value="cat_path_event" ${ach.type==='cat_path_event'?'selected':''}>PATH: EVENT</option>
                                     <option value="streak" ${ach.type==='streak'?'selected':''}>STREAK</option>
                                     ${STATS.map(s => `<option value="${s}" ${ach.type===s?'selected':''}>${s.toUpperCase()}</option>`).join('')}
                                     <optgroup label="Trackers">${state.trackers.map(t=>(`<option value="tracker_${t.id}" ${ach.type==='tracker_'+t.id?'selected':''}>${t.name}</option>`)).join('')}</optgroup>
@@ -1342,6 +1404,12 @@
                     if(state.dailyPoints === undefined) state.dailyPoints = 0;
                     if(state.thresholdsClearedToday === undefined) state.thresholdsClearedToday = 0;
                     if(state.player.nonCompletionStreak === undefined) state.player.nonCompletionStreak = 0;
+                    state.quests.forEach(q => {
+                        if (q.repeatable === undefined) q.repeatable = false;
+                        if (q.isOneTime === undefined) q.isOneTime = false;
+                        if (!q.path) q.path = 'all';
+                        if (q.points === undefined) q.points = 1;
+                    });
                     if(!state.completionTimestamps) state.completionTimestamps = {};
                     state.player.requiredXp = getRequiredXp(state.player.level);
                     if(state.player.xp >= state.player.requiredXp) checkLevelUp();
@@ -1354,7 +1422,8 @@
         function removeItem(coll, id) { state[coll] = state[coll].filter(x=>x.id!==id); renderConfigContent(); saveSystemData(); renderUI(); }
         function addNew(coll) { const id = Date.now().toString(); if(coll==='quests') state.quests.push({id, text:'New Objective', xp:100, xpPercent:0, category:'daily', path:'all', isOneTime:false, repeatable:false, rewards:{ap:1}, deadline:'', points:1}); else if(coll==='achievements') state.achievements.push({id, title:'New Milestone', type:'level', operator:'>=', value:10, rewards:{ap:5}}); else state.trackers.push({id, name:'New Metric', unit:'pts', data:[]}); renderConfigContent(); saveSystemData(); renderUI(); }
         function switchConfigTab(t) { currentConfigTab = t; document.querySelectorAll('.config-tab').forEach(x=>x.classList.remove('active')); const tab = document.getElementById('tab-'+t); if(tab) tab.classList.add('active'); renderConfigContent(); }
-        function updateQuestSearch(value) { questConfigSearchText = value; renderConfigContent(); }
+        function updateQuestSearch(el) { const start = el.selectionStart || 0; const end = el.selectionEnd || start; questConfigSearchText = el.value; renderConfigContent(); requestAnimationFrame(()=>{ const input = document.getElementById('quest-search-input'); if(input){ input.focus(); input.setSelectionRange(start, end); }}); }
+        function updateAchievementSearch(el) { const start = el.selectionStart || 0; const end = el.selectionEnd || start; achievementConfigSearchText = el.value; renderConfigContent(); requestAnimationFrame(()=>{ const input = document.getElementById('achievement-search-input'); if(input){ input.focus(); input.setSelectionRange(start, end); }}); }
         function setQuestConfigMode(mode) { questConfigMode = mode; renderConfigContent(); }
         function setQuestConfigCategory(category) { questConfigCategory = category; renderConfigContent(); }
         function toggleQuestDetails(id) { if(expandedQuestIds.has(id)) expandedQuestIds.delete(id); else expandedQuestIds.add(id); renderConfigContent(); }
@@ -1396,10 +1465,13 @@
         function openProfileModal() { const nameIn = document.getElementById('player-name-input'); if(nameIn) nameIn.value = state.player.name; const modal = document.getElementById('profile-modal'); if(modal) modal.classList.remove('hidden'); }
         function saveProfile() { const nameIn = document.getElementById('player-name-input'); if(nameIn) state.player.name = nameIn.value.toUpperCase() || 'SUNG JIN-WOO'; closeModals(); renderUI(); saveSystemData(); }
         function openPathModal() { const modal = document.getElementById('path-modal'); if(modal) modal.classList.remove('hidden'); }
-        function openAchievementGallery() { renderAchievementGallery(); const modal = document.getElementById('achievement-gallery-modal'); if(modal) modal.classList.remove('hidden'); }
+        function openAchievementGallery() { achievementGallerySearchText = achievementGallerySearchText || ''; renderAchievementGallery(); const modal = document.getElementById('achievement-gallery-modal'); if(modal) modal.classList.remove('hidden'); }
+        
+        function updateGallerySearch(el) { const start = el.selectionStart || 0; const end = el.selectionEnd || start; achievementGallerySearchText = el.value; renderAchievementGallery(); requestAnimationFrame(()=>{ const input = document.getElementById('gallery-search'); if(input){ input.focus(); input.setSelectionRange(start,end); }}); }
         
         function renderAchievementGallery() { 
             const c = document.getElementById('gallery-container'); if(!c) return;
+            const searchInput = document.getElementById('gallery-search'); if(searchInput) searchInput.value = achievementGallerySearchText;
             const f = document.getElementById('gallery-filter').value; c.innerHTML = ''; 
             state.achievements.filter(ach => { 
                 const achObj = state.unlockedAchievementIds.find(a => (typeof a === 'string' ? a : a.id) === ach.id);
@@ -1412,7 +1484,16 @@
                 if(f==='cat_daily') return ach.type === 'cat_daily';
                 if(f==='cat_weekly') return ach.type === 'cat_weekly';
                 if(f==='cat_monthly') return ach.type === 'cat_monthly';
+                if(f==='cat_path_all') return ach.type === 'cat_path_all';
+                if(f==='cat_path_work') return ach.type === 'cat_path_work';
+                if(f==='cat_path_free') return ach.type === 'cat_path_free';
+                if(f==='cat_path_event') return ach.type === 'cat_path_event';
                 return true; 
+            }).filter(ach => {
+                const needle = achievementGallerySearchText.trim().toLowerCase();
+                if(!needle) return true;
+                const haystack = `${ach.title} ${ach.type} ${ach.desc} ${ach.operator} ${ach.value}`.toLowerCase();
+                return haystack.includes(needle);
             }).forEach(ach => { 
                 const achObj = state.unlockedAchievementIds.find(a => (typeof a === 'string' ? a : a.id) === ach.id);
                 const isU = !!achObj;
